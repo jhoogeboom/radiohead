@@ -82,7 +82,7 @@ bool RHGenericDriver::waitCAD()
     unsigned long t = millis();
     while (isChannelActive())
     {
-         if (millis() - t > _cad_timeout) 
+         if (millis() - t > _cad_timeout)
 	     return false;
 #if (RH_PLATFORM == RH_PLATFORM_STM32) // stdlib on STMF103 gets confused if random is redefined
 	 delay(_random(1, 10) * 100);
@@ -175,21 +175,6 @@ bool  RHGenericDriver::sleep()
 void RHGenericDriver::printBuffer(const char* prompt, const uint8_t* buf, uint8_t len)
 {
     uint8_t i;
-
-#ifdef RH_HAVE_SERIAL
-    Serial.println(prompt);
-    for (i = 0; i < len; i++)
-    {
-	if (i % 16 == 15)
-	    Serial.println(buf[i], HEX);
-	else
-	{
-	    Serial.print(buf[i], HEX);
-	    Serial.print(' ');
-	}
-    }
-    Serial.println("");
-#endif
 }
 
 uint16_t RHGenericDriver::rxBad()
