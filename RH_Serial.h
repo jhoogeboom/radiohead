@@ -18,13 +18,13 @@
 #define SYN 0x16
 
 // Maximum message length (including the headers) we are willing to support
-#define RH_SERIAL_MAX_PAYLOAD_LEN 64
+#define RH_SERIAL_MAX_PAYLOAD_LEN 255
 
 // The length of the headers we add.
 // The headers are inside the payload and are therefore protected by the FCS
 #define RH_SERIAL_HEADER_LEN 4
 
-// This is the maximum message length that can be supported by this library. 
+// This is the maximum message length that can be supported by this library.
 // It is an arbitrary limit.
 // Can be pre-defined to a smaller size (to save SRAM) prior to including this header
 // Here we allow for 4 bytes of address and header and payload to be included in the 64 byte encryption limit.
@@ -66,7 +66,7 @@ class HardwareSerial;
 ///
 /// All messages sent and received by this RH_Serial Driver conform to this packet format:
 /// \code
-/// DLE 
+/// DLE
 /// STX
 /// TO Header                (1 octet)
 /// FROM Header              (1 octet)
@@ -78,7 +78,7 @@ class HardwareSerial;
 /// Frame Check Sequence FCS CCITT CRC-16 (2 octets)
 /// \endcode
 ///
-/// If any of octets from TO header through to the end of the payload are a DLE, 
+/// If any of octets from TO header through to the end of the payload are a DLE,
 /// then they are preceded by a DLE (ie DLE stuffing).
 /// The FCS covers everything from the TO header to the ETX inclusive, but not any stuffed DLEs
 ///
@@ -86,10 +86,10 @@ class HardwareSerial;
 ///
 /// The physical connection to your serial port will depend on the type of platform you are on.
 ///
-/// For example, many arduinos only support a single Serial port on pins 0 and 1, 
-/// which is shared with the USB host connections. On such Arduinos, it is not possible to use both 
+/// For example, many arduinos only support a single Serial port on pins 0 and 1,
+/// which is shared with the USB host connections. On such Arduinos, it is not possible to use both
 /// RH_Serial on the Serial port as well as using the Serial port for debugand other printing or communications.
-/// 
+///
 /// On Arduino Mega and Due, there are 4 serial ports:
 /// - Serial: this is the serial port connected to the USB interface and the programming host.
 /// - Serial1: on pins 18 (Tx) and 19 (Rx)
@@ -98,7 +98,7 @@ class HardwareSerial;
 ///
 /// On Uno32, there are 2 serial ports:
 /// - SerialUSB: this is the port for the USB host connection.
-/// - Serial1: on pins 39 (Rx) and 40 (Tx) 
+/// - Serial1: on pins 39 (Rx) and 40 (Tx)
 ///
 /// On Maple and Flymaple, there are 4 serial ports:
 /// - SerialUSB: this is the port for the USB host connection.
@@ -110,40 +110,40 @@ class HardwareSerial;
 /// - On Linux, names like /dev/ttyUSB0 (for a FTDO USB-serial converter)
 /// - On OSX, names like /dev/tty.usbserial-A501YSWL (for a FTDO USB-serial converter)
 ///
-/// Note that it is necessary for you to select which Serial port your RF_Serial will use and pass it to the 
+/// Note that it is necessary for you to select which Serial port your RF_Serial will use and pass it to the
 /// contructor. On Linux you must pass an instance of HardwareSerial.
 ///
 /// \par Testing
-/// 
+///
 /// You can test this class and the RHReliableDatagram manager
 /// on Unix and OSX with back-to-back connected FTDI USB-serial adapters.
-/// Back-to-back means the TX of one is connected to the RX of the other and vice-versa. 
+/// Back-to-back means the TX of one is connected to the RX of the other and vice-versa.
 /// You should also join the ground pins.
 ///
 /// Assume the 2 USB-serial adapters are connected by USB
-/// and have been assigned device names: 
+/// and have been assigned device names:
 /// /dev/ttyUSB0 and /dev/ttyUSB1.
 /// Build the example RHReliableDatagram client and server programs:
 /// \code
-/// tools/simBuild examples/serial/serial_reliable_datagram_server/serial_reliable_datagram_server.pde 
+/// tools/simBuild examples/serial/serial_reliable_datagram_server/serial_reliable_datagram_server.pde
 /// tools/simBuild examples/serial/serial_reliable_datagram_client/serial_reliable_datagram_client.pde
 /// \endcode
 /// In one window run the server, specifying the device to use as an environment variable:
 /// \code
-/// RH_HARDWARESERIAL_DEVICE_NAME=/dev/ttyUSB1 ./serial_reliable_datagram_server 
+/// RH_HARDWARESERIAL_DEVICE_NAME=/dev/ttyUSB1 ./serial_reliable_datagram_server
 /// \endcode
 /// And in another window run the client, specifying the other device to use as an environment variable:
 /// \code
-/// RH_HARDWARESERIAL_DEVICE_NAME=/dev/ttyUSB0 ./serial_reliable_datagram_client 
+/// RH_HARDWARESERIAL_DEVICE_NAME=/dev/ttyUSB0 ./serial_reliable_datagram_client
 /// \endcode
 /// You should see the 2 programs passing messages to each other.
-/// 
+///
 class RH_Serial : public RHGenericDriver
 {
 public:
     /// Constructor
     /// \param[in] serial Reference to the HardwareSerial port which will be used by this instance.
-    /// On Unix and OSX, this is an instance of RHutil/HardwareSerial. On 
+    /// On Unix and OSX, this is an instance of RHutil/HardwareSerial. On
     /// Arduino and other, it is an instance of the built in HardwareSerial class.
     RH_Serial(HardwareSerial& serial);
 
@@ -183,13 +183,13 @@ public:
 
     /// Waits until any previous transmit packet is finished being transmitted with waitPacketSent().
     /// Then loads a message into the transmitter and starts the transmitter. Note that a message length
-    /// of 0 is NOT permitted. 
+    /// of 0 is NOT permitted.
     /// \param[in] data Array of data to be sent
     /// \param[in] len Number of bytes of data to send (> 0)
     /// \return true if the message length was valid and it was correctly queued for transmit
     virtual bool send(const uint8_t* data, uint8_t len);
 
-    /// Returns the maximum message length 
+    /// Returns the maximum message length
     /// available in this Driver.
     /// \return The maximum legal message length
     virtual uint8_t maxMessageLength();
@@ -236,7 +236,7 @@ protected:
     uint16_t        _rxFcs;
 
     /// The received FCS at the end of the current message
-    uint16_t        _rxRecdFcs; 
+    uint16_t        _rxRecdFcs;
 
     /// The Rx buffer
     uint8_t         _rxBuf[RH_SERIAL_MAX_PAYLOAD_LEN];
