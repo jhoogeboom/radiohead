@@ -6,7 +6,7 @@
 #include <RH_Serial.h>
 #if (RH_PLATFORM == RH_PLATFORM_STM32F2)
 #else
- #include <RHutil/HardwareSerial.h>
+ #include <HardwareSerial.h>
 #endif
 #include <RHCRC.h>
 
