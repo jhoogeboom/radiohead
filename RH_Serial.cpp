@@ -6,7 +6,7 @@
 #include <RH_Serial.h>
 #if (RH_PLATFORM == RH_PLATFORM_STM32F2)
 #else
- #include <HardwareSerial.h>
+ #include <RHutil/HardwareSerial.h>
 #endif
 #include <RHCRC.h>
 
@@ -78,7 +78,7 @@ void  RH_Serial::handleRx(uint8_t ch)
 		_rxState = RxStateDLE;
 	}
 	break;
-	    
+
 	case RxStateDLE:
 	{
 	    if (ch == STX)
@@ -135,7 +135,7 @@ void  RH_Serial::handleRx(uint8_t ch)
 	break;
 
 	default: // Else some compilers complain
-	    break; 
+	    break;
     }
 }
 
@@ -202,7 +202,7 @@ bool RH_Serial::send(const uint8_t* data, uint8_t len)
     if (len > RH_SERIAL_MAX_MESSAGE_LEN)
 	return false;
 
-    if (!waitCAD()) 
+    if (!waitCAD())
 	return false;  // Check channel activity
 
     _txFcs = 0xffff;    // Initial value
